@@ -30,6 +30,19 @@
   function decorate(){
     if(!cfg)return;const d=cfg;
     if(image(d.home.logo))document.querySelectorAll('.logo').forEach(el=>{el.innerHTML=`<img src="${image(d.home.logo)}" width="130" height="130" alt="Logo sekolah" style="position:static;width:100%;height:100%;object-fit:contain">`;el.style.background='transparent'});
+    // Missing field uses the supplied first logo; an explicit empty value hides it.
+    const osisLogo=Object.prototype.hasOwnProperty.call(d.home,'osisLogo')
+      ? (d.home.osisLogo==='/osis-logo.png'?'./osis-logo.png':image(d.home.osisLogo))
+      : './osis-logo.png';
+    document.querySelectorAll('header .brand, .school-identity').forEach(area=>{
+      const school=area.querySelector('.logo');if(!school)return;
+      let logo=area.querySelector('img.osis-logo');
+      if(!osisLogo){area.querySelectorAll('.osis-logo').forEach(el=>el.remove());return}
+      let group=school.closest('.identity-logos');
+      if(!group){group=document.createElement('span');group.className='identity-logos';school.before(group);group.append(school)}
+      if(!logo){area.querySelectorAll('.osis-logo').forEach(el=>el.remove());logo=document.createElement('img');logo.className='osis-logo';group.append(logo)}
+      logo.src=osisLogo;logo.alt='Logo OSIS';logo.width=44;logo.height=52;
+    });
     if((location.hash||'#beranda')!=='#beranda')return;
     const banner=document.querySelector('.school-banner');if(!banner)return;
     // Migrate only the old stock hero on display; an owner's custom text wins.
